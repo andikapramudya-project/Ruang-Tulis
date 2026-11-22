@@ -275,3 +275,12 @@ figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-a
   .pager-next, .pager-prev { grid-column: 1; text-align: left; }
   .site-footer { width: calc(100% - 40px); gap: 0 20px; }
 }
+
+/* Media sematan (YouTube, X, Instagram, Facebook, Telegram, TikTok) */
+.article-body iframe[data-embed] { display: block; width: 100%; max-width: 100%; border: 0; margin: 24px 0; border-radius: var(--radius-control); background: var(--surface); }
+.article-body iframe[data-embed="youtube"] { height: auto; aspect-ratio: 16 / 9; }
+.article-body iframe[data-embed="twitter"] { max-width: 550px; }
+.article-body iframe[data-embed="instagram"] { max-width: 540px; }
+.article-body iframe[data-embed="facebook"] { max-width: 500px; }
+.article-body iframe[data-embed="telegram"] { max-width: 480px; }
+.article-body iframe[data-embed="tiktok"] { max-width: 325px; }
