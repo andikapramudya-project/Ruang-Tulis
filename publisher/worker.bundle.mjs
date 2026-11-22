@@ -246,6 +246,39 @@ function createPublisher(fetcher = fetch) {
     }
     fail(409, "Repository sedang berubah. Draft tetap tersimpan; silakan coba lagi.");
   }
+  async function remove(request, env, user) {
+    const input = await boundedJSON(request);
+    if (!validPostPath(input.file || "")) fail(400, "Alamat tulisan tidak valid.");
+    const root = repoPath(env);
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const state = await snapshot(env, user.token);
+      const post = state.posts.find((p) => p.file === input.file);
+      if (!post) fail(404, "Tulisan ini sudah tidak ada di repository.");
+      const source = await github(env, user.token, `${root}/contents/${post.file}?ref=${state.head}`, { optional: true });
+      const markdown = source ? dec.decode(unbase64(source.content.replace(/\s/g, ""))) : "";
+      const prefix = `images/${postSlug(post)}-`;
+      const others = new Set(state.posts.filter((p) => p.file !== post.file && p.cover).map((p) => p.cover));
+      const found = new Set([...markdown.matchAll(/!\[[^\]]*\]\(\s*<?(?:\.\.\/)?(images\/[\w.\-]+)/g)].map((m) => m[1]));
+      if (post.cover) found.add(post.cover);
+      const images = [];
+      for (const path of found) {
+        if (!path.startsWith(prefix) || others.has(path)) continue;
+        if (await github(env, user.token, `${root}/contents/${path}?ref=${state.head}`, { optional: true })) images.push(path);
+      }
+      const manifest = state.posts.filter((p) => p.file !== post.file);
+      const removals = [...source ? [post.file] : [], ...images].map((path) => ({ path, mode: "100644", type: "blob", sha: null }));
+      const tree = await github(env, user.token, `${root}/git/trees`, { method: "POST", body: JSON.stringify({ base_tree: state.tree, tree: [...removals, { path: "posts.json", mode: "100644", type: "blob", content: JSON.stringify(manifest, null, 2) + "\n" }] }) });
+      const commit = await github(env, user.token, `${root}/git/commits`, { method: "POST", body: JSON.stringify({ message: `Hapus: ${post.title}`, tree: tree.sha, parents: [state.head] }) });
+      try {
+        await github(env, user.token, `${root}/git/refs/heads/${encodeURIComponent(env.GITHUB_BRANCH || "main")}`, { method: "PATCH", body: JSON.stringify({ sha: commit.sha, force: false }) });
+      } catch (e) {
+        if (e.status === 409 && attempt < 2) continue;
+        throw e;
+      }
+      return json({ deleted: post.file, images, commit: commit.sha });
+    }
+    fail(409, "Repository sedang berubah. Coba lagi sebentar.");
+  }
   return { async fetch(request, env) {
     const url = new URL(request.url);
     let headers = {};
@@ -312,6 +345,7 @@ function createPublisher(fetcher = fetch) {
           result = json({ post, markdown: dec.decode(unbase64(content.content.replace(/\s/g, ""))), fileSha: content.sha });
         } else result = json({ posts: state.posts });
       } else if (url.pathname === "/api/publish" && request.method === "POST") result = await publish(request, env, user);
+      else if (url.pathname === "/api/delete" && request.method === "POST") result = await remove(request, env, user);
       else fail(404, "Halaman tidak ditemukan.");
       for (const [k, v] of Object.entries(headers)) result.headers.set(k, v);
       return result;
