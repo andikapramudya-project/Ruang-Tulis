@@ -124,14 +124,15 @@ p { margin: 0 0 var(--space-4); }
 /* 6) DAFTAR TULISAN ----------------------------------------------------- */
 .post-list { padding-bottom: 64px; }
 .post-list.compact { padding-bottom: 0; }
-.post-card { position: relative; padding: 24px 12px; margin-inline: -12px; border-bottom: 1px solid var(--border); border-radius: var(--radius-panel); display: grid; grid-template-columns: minmax(0, 1fr) 112px; gap: 6px 24px; align-items: center; transition: background-color var(--motion-fast); }
-.post-card:hover { background: var(--surface); }
+.post-card { position: relative; padding: 24px 12px; margin-inline: -12px; border-radius: var(--radius-panel); display: grid; grid-template-columns: minmax(0, 1fr) 112px; gap: 6px 24px; align-items: center; transition: background-color var(--motion-fast); }
+.post-card::before { content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 1px; background: var(--border); }
+@media (hover: hover) { .post-card:hover { background: var(--surface); } }
 .post-card .post-meta { grid-column: 1; grid-row: 1; }
 .post-card .post-copy { grid-column: 1; grid-row: 2; min-width: 0; }
 .post-card .post-cover { grid-column: 2; grid-row: 1 / span 2; }
 .post-card h3 { font-size: 20px; line-height: 1.3; font-weight: 600; margin-bottom: 4px; }
 .post-card h3 a:hover { text-decoration: none; }
-.post-card p:not(.post-meta) { color: var(--text-muted); font-size: 15px; line-height: 1.6; margin: 0; }
+.post-card p:not(.post-meta) { color: var(--text-muted); font-size: 15px; line-height: 1.6; margin: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
 .post-card .post-copy a::after { content: ""; position: absolute; inset: 0; }  /* seluruh kartu bisa diklik */
 .post-meta { margin: 0; color: var(--text-muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
 .post-cover { overflow: hidden; border-radius: var(--radius-panel); aspect-ratio: 4 / 3; background: var(--surface); box-shadow: 0 0 0 1px var(--border); }
@@ -240,7 +241,7 @@ figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-a
 .pager-prev { grid-column: 1; }
 
 /* 9) FOOTER ------------------------------------------------------------- */
-.site-footer { width: min(calc(100% - 48px), var(--wide-width)); margin: auto; border-top: 1px solid var(--border); padding: 24px 0 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--text-muted); font-size: 13px; }
+.site-footer { width: min(calc(100% - 48px), var(--max-width)); margin: auto; border-top: 1px solid var(--border); padding: 24px 0 32px; display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 0 24px; color: var(--text-muted); font-size: 13px; }
 .site-footer p { margin: 0; }
 .site-footer div { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
 .site-footer a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; }
@@ -271,8 +272,9 @@ figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-a
   .hero { padding: 44px 0 36px; }
   .hero-text { font-size: 17px; }
   .post-card { grid-template-columns: minmax(0, 1fr) 84px; gap: 6px 16px; padding: 20px 10px; margin-inline: -10px; }
+  .post-card::before { left: 10px; right: 10px; }
   .post-card h3 { font-size: 18px; }
-  .post-featured { padding: 16px 10px 24px; }
+  .post-featured { grid-template-columns: minmax(0, 1fr); padding: 16px 10px 24px; }
   .post-featured .post-cover { aspect-ratio: 16 / 10; }
   .post-featured h3 { font-size: 25px; }
   .page-title { padding-top: 36px; padding-bottom: 16px; }
@@ -283,5 +285,5 @@ figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-a
   .article-body h2 { font-size: 23px; }
   .pager { grid-template-columns: 1fr; }
   .pager-next, .pager-prev { grid-column: 1; text-align: left; }
-  .site-footer { width: calc(100% - 40px); align-items: flex-start; flex-direction: column; gap: 4px; }
+  .site-footer { width: calc(100% - 40px); gap: 0 20px; }
 }
