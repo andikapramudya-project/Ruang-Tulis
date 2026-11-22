@@ -9,7 +9,9 @@ const date=(value,short=false)=>new Date(`${value}T00:00:00`).toLocaleDateString
 const category=post=>post.category.toLowerCase().includes('weekly')?'weekly':post.category.toLowerCase().includes('monthly')?'monthly':'personal';
 const href=post=>`#artikel/${encodeURIComponent(postSlug(post))}`;
 function closeMenu(){menu.classList.remove('open');menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Buka menu');menuButton.innerHTML=RuangUI.icon('menu');}
+function setWriterLink(post){const link=document.querySelector('.site-footer a[href^="tulis.html"]');if(link)link.href=post&&post.file?`tulis.html?edit=${encodeURIComponent(post.file)}`:'tulis.html';}
 function showPage(id,focus=true){
+ if(id!=='article')setWriterLink();
  const page=pages.find(p=>p.id===id)||pages[0];
  pages.forEach(p=>p.classList.toggle('active',p===page));
  document.querySelectorAll('.nav-menu a').forEach(a=>{const exact=a.dataset.page===page.id;const selected=exact||a.dataset.page==='archive'&&['weekly','monthly','article'].includes(page.id);a.classList.toggle('active',selected);if(selected)a.setAttribute('aria-current',exact?'page':'location');else a.removeAttribute('aria-current');});
@@ -55,7 +57,7 @@ function enhanceArticle(el,post){
  const quotes=el.querySelectorAll('blockquote');const closing=quotes[quotes.length-1];if(closing){closing.classList.add('closing-quote');if(closing.nextElementSibling?.tagName==='HR')closing.nextElementSibling.classList.add('after-closing-quote');}
 }
 async function loadArticle(post,focus){
- const el=document.getElementById('articleContent');showPage('article',false);el.setAttribute('aria-busy','true');el.innerHTML=backLink()+'<p class="loading-state" role="status"><span class="loading-dot"></span>Menyiapkan tulisan…</p><div class="skeleton" aria-hidden="true"><i></i><i></i><i></i></div>';
+ const el=document.getElementById('articleContent');showPage('article',false);setWriterLink(post);el.setAttribute('aria-busy','true');el.innerHTML=backLink()+'<p class="loading-state" role="status"><span class="loading-dot"></span>Menyiapkan tulisan…</p><div class="skeleton" aria-hidden="true"><i></i><i></i><i></i></div>';
  articleRequest=new AbortController();const request=articleRequest;
  try{
   if(!post)throw new Error('not-found');

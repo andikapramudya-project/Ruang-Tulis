@@ -44,6 +44,8 @@ dialog label+label {margin-top:20px}
 .delete-confirm .dialog-actions {margin-top:12px;flex-wrap:wrap}
 .library-item .delete-post {color:#c0392b}
 :root[data-theme="dark"] .library-item .delete-post {color:#ff8a80}
+body.opening-post dialog[open]#libraryDialog {opacity:0}
+body.opening-post dialog#libraryDialog::backdrop {background:transparent}
 
 /* ===== Ruang penulis ala Telegra.ph: layar bersih, menu kecil, toolbar di bawah ===== */
 .writer-page {--bar-h:56px}

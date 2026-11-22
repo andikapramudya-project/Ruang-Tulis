@@ -89,4 +89,32 @@
     busy = false;
   }
   new MutationObserver(decorate).observe(list, { childList: true });
+
+  // Dibuka dari halaman sebuah tulisan (tulis.html?edit=posts/nama.md): langsung buka tulisan itu untuk disunting.
+  const target = new URLSearchParams(location.search).get('edit') || '';
+  if (/^posts\/[a-z0-9][a-z0-9-]*(?:\.md)?$/.test(target)) openTarget(target);
+
+  async function openTarget(file) {
+    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const notice = message => { const box = document.getElementById('editorNotice'); if (box) { box.hidden = false; box.dataset.error = 'false'; box.textContent = message; } };
+    history.replaceState(null, '', location.pathname);
+    const library = document.getElementById('libraryButton');
+    for (let i = 0; i < 60 && !(document.querySelector('.tiptap') && library && !library.disabled); i++) await wait(150);
+    if (!token()) { notice('Hubungkan GitHub (menu ⋯), lalu buka tulisan ini lewat Draf dan tulisan untuk menyuntingnya.'); return; }
+    try {
+      const posts = (await call('/api/posts')).posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const index = posts.findIndex(post => post.file === file);
+      if (index < 0) { notice('Tulisan ini sudah tidak ada di repository.'); return; }
+      document.body.classList.add('opening-post');
+      library.click();
+      for (let i = 0; i < 60 && list.querySelectorAll('.library-item').length !== posts.length; i++) await wait(150);
+      const row = list.querySelectorAll('.library-item')[index];
+      if (row?.querySelector('strong')?.textContent !== posts[index].title) throw new Error('Daftar belum cocok.');
+      row.querySelector('button').click();
+    } catch {
+      notice('Tulisan belum bisa dibuka otomatis. Pilih lewat Draf dan tulisan.');
+    }
+    await wait(1500);
+    document.body.classList.remove('opening-post');
+  }
 })();
