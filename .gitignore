@@ -1,0 +1,49 @@
+node_modules/
+.dev.vars
+.env*
+.wrangler/
+.open-design/.checks/
+Open Design/**/exports/
+test-results/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+local.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+*.dpapi
+secrets/*
+!secrets/.gitkeep
+# Dependencies and generated files
+node_modules/
+.pnpm-store/
+.gradle/
+.kotlin/
+.build/
+build/
+dist/
+coverage/
+__pycache__/
+*.pyc
+*.tsbuildinfo
+.venv/
+.DS_Store
+Thumbs.db
+*.log
+.netlify/
+.wrangler/
+test-results/
+# Release assets: upload separately via GitHub Releases
+releases/
+output/
+*.apk
+*.aab
+*.mpp
+*.idsig
