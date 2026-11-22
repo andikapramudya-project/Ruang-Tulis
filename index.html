@@ -5,10 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ruang Tulis</title>
   <meta name="description" content="Catatan pribadi Andika Pramudya: opini, refleksi, dan hal-hal yang sedang dipikirkan." />
+  <meta name="theme-color" content="#f7f3ea" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#161411" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="id_ID" />
+  <meta property="og:site_name" content="Ruang Tulis" />
+  <meta property="og:title" content="Ruang Tulis" />
+  <meta property="og:description" content="Catatan pribadi, ditulis pelan. Opini, refleksi, dan hal-hal yang sedang dipikirkan." />
+  <meta property="og:url" content="https://andikapramudya-project.github.io/Ruang-Tulis/" />
+  <meta property="og:image" content="https://andikapramudya-project.github.io/Ruang-Tulis/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&display=swap" />
   <link rel="stylesheet" href="style.css" />
   <script src="theme-init.js"></script>
 </head>
 <body>
+  <div class="read-progress" id="readProgress" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Lewati ke isi</a>
   <header class="site-header">
     <div class="header-inner">
@@ -50,7 +65,7 @@
         </div>
 
         <div class="post-list compact" id="latestPosts" aria-live="polite" aria-busy="true">
-          <p class="empty-state">Memuat tulisan...</p>
+          <span class="sr-only">Memuat tulisan…</span><div class="skeleton" aria-hidden="true"><i></i><i></i><i></i></div><div class="skeleton" aria-hidden="true"><i></i><i></i><i></i></div><div class="skeleton" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
       </div>
     </section>
@@ -136,7 +151,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>&copy; 2026 Andika Pramudya. Ditulis dengan waktu dan perhatian.</p>
+    <p>&copy; 2026 Andika Pramudya. Ditulis pelan-pelan.</p>
     <div>
       <a href="#weekly" data-page="weekly">Weekly Notes</a>
       <a href="#monthly" data-page="monthly">Monthly Essays</a>
