@@ -195,6 +195,7 @@ function createPublisher(fetcher = fetch) {
       imageBlobs.push({ file, content: image.content });
     }
     if (/ruang-image:|data:image\//i.test(markdown)) fail(400, "Ada gambar yang belum siap disimpan.");
+    const cover = (markdown.match(/!\[[^\]]*\]\(\s*<?(?:\.\.\/)?(images\/[\w.\-]+)/) || [])[1] || "";
     const root = repoPath(env);
     let blobs = null;
     for (let attempt = 0; attempt < 3; attempt++) {
@@ -224,6 +225,8 @@ function createPublisher(fetcher = fetch) {
         }
       }
       const record = { ...existing || {}, title: post.title, date: post.date, category: post.category, excerpt: post.excerpt, slug: post.slug, file: post.file, publicationId: input.publicationId, publicationHash: requestHash };
+      if (cover) record.cover = cover;
+      else delete record.cover;
       const manifest = existing ? state.posts.map((p) => p.file === post.file ? record : p) : [...state.posts, record];
       const textBlob = await github(env, user.token, `${root}/git/blobs`, { method: "POST", body: JSON.stringify({ content: markdown + "\n", encoding: "utf-8" }) });
       const tree = await github(env, user.token, `${root}/git/trees`, { method: "POST", body: JSON.stringify({ base_tree: state.tree, tree: [...blobs, { path: post.file, mode: "100644", type: "blob", sha: textBlob.sha }, { path: "posts.json", mode: "100644", type: "blob", content: JSON.stringify(manifest, null, 2) + "\n" }] }) });

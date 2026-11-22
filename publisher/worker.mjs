@@ -62,6 +62,7 @@ export function createPublisher(fetcher=fetch){
     const imageBlobs=[];
     for(const image of images){const file=`images/${post.slug}-${(await digest(image.content)).slice(0,16)}.${image.ext}`;imageMap[image.id]=`../${file}`;const marker=`ruang-image:${image.id}`;if(!markdown.includes(marker))fail(400,'Ada gambar yang tidak digunakan dalam tulisan.');markdown=markdown.replaceAll(marker,`../${file}`);imageBlobs.push({file,content:image.content});}
     if(/ruang-image:|data:image\//i.test(markdown))fail(400,'Ada gambar yang belum siap disimpan.');
+    const cover=(markdown.match(/!\[[^\]]*\]\(\s*<?(?:\.\.\/)?(images\/[\w.\-]+)/)||[])[1]||'';
     const root=repoPath(env);let blobs=null;
     for(let attempt=0;attempt<3;attempt++){
       const state=await snapshot(env,user.token);const prior=state.posts.find(p=>p.publicationId===input.publicationId);
@@ -72,6 +73,7 @@ export function createPublisher(fetcher=fetch){
       if(!input.file){const occupied=await github(env,user.token,`${root}/contents/${post.file}?ref=${state.head}`,{optional:true});if(occupied)fail(409,'File dengan alamat ini sudah ada. Pilih alamat lain.');}
       if(!blobs){blobs=[];for(const image of imageBlobs){const blob=await github(env,user.token,`${root}/git/blobs`,{method:'POST',body:JSON.stringify({content:image.content,encoding:'base64'})});blobs.push({path:image.file,mode:'100644',type:'blob',sha:blob.sha});}}
       const record={...(existing||{}),title:post.title,date:post.date,category:post.category,excerpt:post.excerpt,slug:post.slug,file:post.file,publicationId:input.publicationId,publicationHash:requestHash};
+      if(cover)record.cover=cover;else delete record.cover;
       const manifest=existing?state.posts.map(p=>p.file===post.file?record:p):[...state.posts,record];
       const textBlob=await github(env,user.token,`${root}/git/blobs`,{method:'POST',body:JSON.stringify({content:markdown+'\n',encoding:'utf-8'})});
       const tree=await github(env,user.token,`${root}/git/trees`,{method:'POST',body:JSON.stringify({base_tree:state.tree,tree:[...blobs,{path:post.file,mode:'100644',type:'blob',sha:textBlob.sha},{path:'posts.json',mode:'100644',type:'blob',content:JSON.stringify(manifest,null,2)+'\n'}]})});
