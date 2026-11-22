@@ -96,5 +96,16 @@
     "publicationId": "daadaf85-4b4a-48c0-aaf9-25789f9798f9",
     "publicationHash": "7e4661550c9157aa81c6cf07e018383d8895bfe40382bf7521f09a6af50157a9",
     "cover": "images/tes-publisher-dfef4b7329f4fb57.webp"
+  },
+  {
+    "title": "Apa yang membuatmu tidak religius",
+    "date": "2026-11-23",
+    "category": "Personal",
+    "excerpt": "Saya tidak pernah merasa \"pas\" dan cocok dengan agama. Religion is not for me.",
+    "slug": "apa-yang-membuatmu-tidak-religius",
+    "file": "posts/apa-yang-membuatmu-tidak-religius.md",
+    "publicationId": "1be0cc95-4161-4375-b279-d6d568170a6f",
+    "publicationHash": "e9d4191e9744d8883bb274aa74f2ed28d36b074e4e0db2eddad0151b75ac0229",
+    "cover": "images/apa-yang-membuatmu-tidak-religius-5d495cb112b32dda.webp"
   }
 ]
