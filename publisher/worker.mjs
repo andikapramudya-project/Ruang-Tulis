@@ -39,6 +39,21 @@ export function validateImages(images){
   });
 }
 
+const REMOTE_LIMIT=5*1024*1024;
+function remoteHost(url){
+  let u;try{u=new URL(url);}catch{fail(400,'Alamat gambar tidak valid.');}
+  if(u.protocol!=='https:'||u.port||u.username||u.password)fail(400,'Alamat gambar harus memakai https.');
+  const host=u.hostname.toLowerCase();
+  if(!/^[a-z0-9-]+(?:\.[a-z0-9-]+)+$/.test(host)||/^\d+(?:\.\d+){3}$/.test(host)||/(?:^|\.)(?:localhost|local|internal|lan|home|corp)$/.test(host))fail(400,'Alamat gambar tidak dapat dipakai.');
+  return u;
+}
+function imageKind(bytes){
+  if(bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71)return {mime:'image/png',ext:'png'};
+  if(bytes[0]===255&&bytes[1]===216&&bytes[2]===255)return {mime:'image/jpeg',ext:'jpg'};
+  if(dec.decode(bytes.slice(0,4))==='RIFF'&&dec.decode(bytes.slice(8,12))==='WEBP')return {mime:'image/webp',ext:'webp'};
+  if(dec.decode(bytes.slice(0,4))==='GIF8')return {mime:'image/gif',ext:'gif'};
+  return null;
+}
 export function createPublisher(fetcher=fetch){
   async function github(env,token,path,options={}){
     const response=await fetcher(`https://api.github.com${path}`,{...options,headers:{'Authorization':`Bearer ${token}`,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2026-03-10','User-Agent':'Ruang-Tulis-Publisher','Content-Type':'application/json',...options.headers}});
@@ -53,10 +68,31 @@ export function createPublisher(fetcher=fetch){
   }
   const repoPath=env=>`/repos/${env.GITHUB_REPOSITORY}`;
   async function snapshot(env,token){const root=repoPath(env);const ref=await github(env,token,`${root}/git/ref/heads/${encodeURIComponent(env.GITHUB_BRANCH||'main')}`);const head=ref.object.sha;const commit=await github(env,token,`${root}/git/commits/${head}`);const manifest=await github(env,token,`${root}/contents/posts.json?ref=${head}`);let posts;try{posts=JSON.parse(dec.decode(unbase64(manifest.content.replace(/\s/g,''))));}catch{fail(502,'Daftar tulisan di repository tidak dapat dibaca.');}if(!Array.isArray(posts))fail(502,'Daftar tulisan tidak valid.');return {head,tree:commit.tree.sha,posts};}
+  async function fetchRemoteImages(list){
+    if(!Array.isArray(list)||list.length>8)fail(400,'Maksimal 8 gambar dari alamat URL per penerbitan.');
+    const ids=new Set();let total=0;const out=[];
+    for(const item of list){
+      if(!/^img-[a-z0-9-]{8,64}$/.test(item?.id||'')||ids.has(item.id))fail(400,'Identitas gambar tidak valid.');ids.add(item.id);
+      let current=remoteHost(String(item.url||'')),response=null;
+      for(let hop=0;hop<4;hop++){
+        try{response=await fetcher(current.href,{redirect:'manual',headers:{Accept:'image/*','User-Agent':'Ruang-Tulis-Publisher'}});}catch{fail(400,'Gambar dari alamat URL tidak dapat diunduh.');}
+        if([301,302,303,307,308].includes(response.status)){const next=response.headers.get('location');if(!next)fail(400,'Gambar dari alamat URL tidak dapat diunduh.');current=remoteHost(new URL(next,current).href);response=null;continue;}
+        break;
+      }
+      if(!response||!response.ok)fail(400,'Gambar dari alamat URL tidak dapat diunduh. Periksa alamatnya atau unggah dari perangkat.');
+      if(Number(response.headers.get('Content-Length'))>REMOTE_LIMIT)fail(413,'Gambar dari alamat URL lebih dari 5 MB.');
+      const bytes=new Uint8Array(await response.arrayBuffer());
+      if(bytes.length>REMOTE_LIMIT)fail(413,'Gambar dari alamat URL lebih dari 5 MB.');
+      total+=bytes.length;if(total>15*1024*1024)fail(413,'Total gambar dari alamat URL terlalu besar.');
+      const kind=imageKind(bytes);if(!kind)fail(400,'Alamat tersebut bukan gambar PNG, JPEG, WebP, atau GIF.');
+      out.push({id:item.id,content:base64(bytes),ext:kind.ext});
+    }
+    return out;
+  }
   async function publish(request,env,user){
     const input=await boundedJSON(request);if(!/^[a-f0-9-]{36}$/.test(input.publicationId||''))fail(400,'Identitas penerbitan tidak valid.');
     let post;try{post=validatePost(input);}catch(e){fail(400,e.message);}
-    const images=validateImages(input.images||[]);const requestHash=await digest(JSON.stringify(input));
+    const images=[...validateImages(input.images||[]),...await fetchRemoteImages(input.remoteImages||[])];const requestHash=await digest(JSON.stringify(input));
     const cacheKey=`published:${user.sessionId}:${input.publicationId}`;const cached=await env.SESSIONS.get(cacheKey,'json');if(cached){if(cached.hash!==requestHash)fail(409,'Isi tulisan berubah. Mulai penerbitan baru.');return json(cached.result);}
     let markdown=post.markdown;const imageMap={};
     const imageBlobs=[];

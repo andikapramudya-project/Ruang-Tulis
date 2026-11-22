@@ -57,6 +57,10 @@ Menambah tulisan tidak memerlukan build.
 
 **Lewat editor (disarankan).** Aktifkan layanan penerbitan satu kali dengan mengikuti [panduan aktivasi](docs/AKTIVASI-EDITOR.md). Setelah itu, buka `tulis.html`, masuk dengan GitHub, tulis, lalu klik **Terbitkan**.
 
+Fitur editor: judul, tebal/miring, tautan, subjudul, kutipan, daftar, **kode** (teks terpilih jadi kode sebaris, selain itu blok kode), **garis pemisah**, **gambar** dari perangkat atau dari alamat https (diunduh Worker saat terbit), **sematan** YouTube, X/Twitter, Instagram, Facebook, Telegram, dan TikTok, serta tombol ↑ ↓ (Alt+↑/↓) untuk memindah blok, gandakan blok, dan hapus blok. Sesi login bertahan 7 hari di perangkat yang sama.
+
+Setelah memperbarui `publisher/worker.mjs`, tempel ulang `publisher/worker.bundle.mjs` ke Cloudflare (Edit code → Deploy).
+
 **Manual.** Tambahkan file `posts/nama-tulisan.md`, taruh gambar di `images/`, lalu daftarkan di `posts.json`:
 
 ```json

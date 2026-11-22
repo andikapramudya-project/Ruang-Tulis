@@ -1,0 +1,42 @@
+name: Bangun editor
+
+# Membangun assets/ dan publisher/worker.bundle.mjs otomatis kalau kode sumber editor berubah.
+# Tidak berjalan di main, jadi penerbitan lewat editor tidak memicunya.
+on:
+  push:
+    branches-ignore: [main]
+    paths:
+      - 'src/**'
+      - 'lib/**'
+      - 'publisher/worker.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/build.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bangun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Simpan hasil bangun
+        run: |
+          git config user.name "andikapramudya-project"
+          git config user.email "359870989+andikapramudya-project@users.noreply.github.com"
+          git add assets publisher/worker.bundle.mjs
+          if git diff --cached --quiet; then
+            echo "Tidak ada perubahan hasil bangun."
+          else
+            git commit -m "Bangun ulang editor"
+            git push
+          fi
