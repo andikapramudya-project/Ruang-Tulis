@@ -1,6 +1,6 @@
 import {validatePost, postSlug} from '../lib/content.mjs';
 
-const SESSION_TTL=8*60*60, MAX_BODY=12*1024*1024;
+const SESSION_TTL=7*24*60*60, MAX_BODY=12*1024*1024;
 const enc=new TextEncoder(),dec=new TextDecoder();
 export class HttpError extends Error {constructor(status,message){super(message);this.status=status;}}
 const fail=(status,message)=>{throw new HttpError(status,message);};
