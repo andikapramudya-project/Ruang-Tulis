@@ -19,24 +19,26 @@ function showPage(id,focus=true){
  if(focus)(page.querySelector('h1')||main).focus({preventScroll:true});
  if(page.id!=='article')lastList=page.id;
  if(page.id!=='article')document.title=page.id==='home'?'Ruang Tulis':`${page.querySelector('h1')?.textContent||'Tulisan'} — Ruang Tulis`;
- setProgress(page.id==='article');
 }
 function empty(message,link=true){return `<div class="empty-state"><strong>Belum ada tulisan di sini.</strong>${esc(message)}${link?'<br><a class="text-link" href="#archive">Jelajahi tulisan lainnya '+RuangUI.icon('arrow')+'</a>':''}</div>`;}
+const tag=post=>`<span class="tag" data-cat="${category(post)}">${esc(post.category)}</span>`;
 const cover=post=>post.cover&&/^images\/[\w.\-]+$/.test(post.cover)?`<div class="post-cover"><img src="${esc(post.cover)}" alt="" loading="lazy" decoding="async"></div>`:'';
-function card(post,featured=false){return `<article class="post-card${featured?' post-featured':''}${post.cover?' has-cover':''}">${cover(post)}<p class="post-meta"><time datetime="${esc(post.date)}">${esc(date(post.date))}</time><span>${esc(post.category)}</span></p><div class="post-copy"><h3><a href="${href(post)}">${esc(post.title)}</a></h3><p>${esc(post.excerpt)}</p></div><a class="read-more" href="${href(post)}" aria-label="Baca ${esc(post.title)}">${RuangUI.icon('arrow')}</a></article>`;}
+function card(post,featured=false){return `<article class="post-card${featured?' post-featured':''}${post.cover?' has-cover':''}">${cover(post)}<p class="post-meta"><time datetime="${esc(post.date)}">${esc(date(post.date))}</time>${tag(post)}</p><div class="post-copy"><h3><a href="${href(post)}">${esc(post.title)}</a></h3><p>${esc(post.excerpt)}</p></div><a class="read-more" href="${href(post)}" aria-label="Baca ${esc(post.title)}">${RuangUI.icon('arrow')}</a></article>`;}
 function renderList(id,list,message,featured=false){const el=document.getElementById(id);el.innerHTML=list.length?list.map((p,i)=>card(p,featured&&i===0)).join(''):empty(message);el.setAttribute('aria-busy','false');}
 function renderArchive(){
  const visible=posts.filter(p=>activeFilter==='all'||category(p)===activeFilter);
  const groups=new Map();visible.forEach(p=>{const month=new Date(`${p.date}T00:00:00`).toLocaleDateString('id-ID',{month:'long',year:'numeric'});if(!groups.has(month))groups.set(month,[]);groups.get(month).push(p);});
- document.getElementById('archiveList').innerHTML=visible.length?[...groups].map(([month,list])=>`<div class="archive-group"><h2>${esc(month)}</h2><ul>${list.map(p=>`<li><time datetime="${esc(p.date)}">${esc(date(p.date,true))}</time><a href="${href(p)}">${esc(p.title)}</a><small>${esc(p.category)}</small></li>`).join('')}</ul></div>`).join(''):empty('Coba kategori lain untuk menemukan tulisan.',false);
+ document.getElementById('archiveList').innerHTML=visible.length?[...groups].map(([month,list])=>`<div class="archive-group"><h2>${esc(month)}</h2><ul>${list.map(p=>`<li><time datetime="${esc(p.date)}">${esc(date(p.date,true))}</time><a href="${href(p)}">${esc(p.title)}</a><small>${tag(p)}</small></li>`).join('')}</ul></div>`).join(''):empty('Coba kategori lain untuk menemukan tulisan.',false);
 }
-const progress=document.getElementById('readProgress');
-function updateProgress(){if(!progress)return;const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max>0?Math.min(1,scrollY/max):0})`;}
-function setProgress(on){if(!progress)return;progress.classList.toggle('on',on);if(on)updateProgress();}
-addEventListener('scroll',()=>{if(progress?.classList.contains('on'))requestAnimationFrame(updateProgress);},{passive:true});
 const readingTime=md=>Math.max(1,Math.round(md.split(/\s+/).filter(Boolean).length/200));
 function pager(post){const i=posts.indexOf(post);if(i<0)return '';const newer=posts[i-1],older=posts[i+1];const link=(p,cls,label)=>p?`<a class="pager-link ${cls}" href="${href(p)}"><small>${label}</small><span>${esc(p.title)}</span></a>`:'';const html=link(older,'pager-prev','← Tulisan sebelumnya')+link(newer,'pager-next','Tulisan berikutnya →');return html?`<nav class="pager" aria-label="Tulisan lainnya">${html}</nav>`:'';}
-function backLink(){const id=['home','weekly','monthly','archive'].includes(lastList)?lastList:'home';return `<a href="#${id}" class="back-link">${RuangUI.icon('back')} Kembali ke ${id==='home'?'beranda':id==='archive'?'arsip':id==='weekly'?'Weekly Notes':'Monthly Essays'}</a>`;}
+function backLink(){
+ const id=['home','weekly','monthly','archive'].includes(lastList)?lastList:'home';
+ const names={weekly:'Weekly Notes',monthly:'Monthly Essays',archive:'Tulisan'};
+ const section=id==='home'?'':`<span aria-hidden="true">/</span><a class="back-link" href="#${id}">${names[id]}</a>`;
+ const font=localStorage.getItem('font')==='serif'?'serif':'sans';
+ return `<div class="crumb-row"><nav class="crumbs" aria-label="Jalur halaman"><a class="back-link" href="#home">Ruang Tulis</a>${section}</nav><div class="font-switch" role="group" aria-label="Jenis huruf artikel"><button type="button" data-font-choice="sans" aria-pressed="${font==='sans'}">Sans</button><button type="button" data-font-choice="serif" aria-pressed="${font==='serif'}">Serif</button></div></div>`;
+}
 function enhanceArticle(el,post){
  const base=new URL(post.file,location.href);
  el.querySelectorAll('img').forEach((img,index)=>{
@@ -56,8 +58,8 @@ async function loadArticle(post,focus){
   const response=await fetch(post.file,{signal:request.signal});if(!response.ok)throw new Error('not-found');
   const md=(await response.text()).replace(/^\uFEFF?(\s*\r?\n)*#\s+.+(?:\r?\n|$)/,'');
   if(request!==articleRequest)return;
-  el.innerHTML=`${backLink()}<p class="eyebrow">${esc(post.category)}</p><h1 tabindex="-1">${esc(post.title)}</h1><p class="article-meta"><time datetime="${esc(post.date)}">${esc(date(post.date))}</time> · Andika Pramudya · ${readingTime(md)} menit baca</p>${RuangRenderer.render(md)}${pager(post)}`;
-  enhanceArticle(el,post);updateProgress();document.title=`${post.title} — Ruang Tulis`;if(focus)el.querySelector('h1').focus({preventScroll:true});
+  el.innerHTML=`${backLink()}<h1 tabindex="-1">${esc(post.title)}</h1><dl class="props"><div><dt>Tanggal</dt><dd><time datetime="${esc(post.date)}">${esc(date(post.date))}</time></dd></div><div><dt>Kategori</dt><dd>${tag(post)}</dd></div><div><dt>Waktu baca</dt><dd>${readingTime(md)} menit</dd></div><div><dt>Penulis</dt><dd>Andika Pramudya</dd></div></dl>${RuangRenderer.render(md)}${pager(post)}`;
+  enhanceArticle(el,post);document.title=`${post.title} — Ruang Tulis`;if(focus)el.querySelector('h1').focus({preventScroll:true});
  }catch(error){if(error.name==='AbortError')return;if(request!==articleRequest)return;el.innerHTML=`${backLink()}<h1 tabindex="-1">Tulisan belum bisa dibuka.</h1><div class="empty-state">Coba muat kembali, atau jelajahi tulisan lainnya.<br><button class="button" data-retry="article">Coba lagi</button></div>`;if(focus)el.querySelector('h1').focus({preventScroll:true});}
  finally{if(request===articleRequest)el.setAttribute('aria-busy','false');}
 }
@@ -77,6 +79,7 @@ async function loadPosts(){
 menuButton.addEventListener('click',()=>{const open=menuButton.getAttribute('aria-expanded')!=='true';menu.classList.toggle('open',open);menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'Tutup menu':'Buka menu');menuButton.innerHTML=RuangUI.icon(open?'close':'menu');});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('open')){closeMenu();menuButton.focus();}});
 document.addEventListener('click',e=>{if(e.target.closest('.skip-link')){e.preventDefault();main.focus();return;}if(!e.target.closest('.site-header'))closeMenu();const retry=e.target.closest('[data-retry]');if(retry){if(retry.dataset.retry==='posts')loadPosts();else handleHash();}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-font-choice]');if(!b)return;const f=b.dataset.fontChoice;document.documentElement.dataset.font=f;RuangUI.storage.set('font',f);document.querySelectorAll('[data-font-choice]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
 document.getElementById('archiveFilter').addEventListener('click',e=>{const button=e.target.closest('[data-filter]');if(!button)return;activeFilter=button.dataset.filter;document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});renderArchive();});
 pages.forEach(p=>p.querySelector('h1')?.setAttribute('tabindex','-1'));
 window.addEventListener('hashchange',()=>handleHash());loadPosts();
