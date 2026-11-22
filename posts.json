@@ -4,49 +4,56 @@
     "date": "2022-01-03",
     "category": "Monthly Essay",
     "excerpt": "Krisis Toleransi, Perumpamaan Toleransi, dan Mempermasalahkan pemimpin karena identitas agama.",
-    "file": "posts/toleransi.md"
+    "file": "posts/toleransi.md",
+    "cover": "images/toleransi-1.jpg"
   },
   {
     "title": "Childfree",
     "date": "2024-06-26",
     "category": "Monthly Essay",
     "excerpt": "Keputusan tidak punya anak, Kontrasepsi dan Lingkaran setan kemiskinan.",
-    "file": "posts/childfree.md"
+    "file": "posts/childfree.md",
+    "cover": "images/childfree-1.jpg"
   },
   {
     "title": "Investasi",
     "date": "2025-04-24",
     "category": "Monthly Essay",
     "excerpt": "Investasi terbaik, Saham dan Permasalahan anak muda masa kini.",
-    "file": "posts/investasi.md"
+    "file": "posts/investasi.md",
+    "cover": "images/investasi-1.jpg"
   },
   {
     "title": "Israel vs Palestina",
     "date": "2021-05-26",
     "category": "Monthly Essay",
     "excerpt": "Konflik Politik dan Timur Tengah, Solusi Dua Negara, dan opini pribadi tentang Konflik dan Kemanusiaan.",
-    "file": "posts/israel-palestina.md"
+    "file": "posts/israel-palestina.md",
+    "cover": "images/palestina-1.jpg"
   },
   {
     "title": "Kebiasaan Orang Indonesia Yang Perlu Dihentikan",
     "date": "2024-12-21",
     "category": "Monthly Essay",
     "excerpt": "Kuah Bakso, Makanan Sisa, dan Kebiasaan Buruk",
-    "file": "posts/kebiasaan-buruk.md"
+    "file": "posts/kebiasaan-buruk.md",
+    "cover": "images/bakso-1.jpg"
   },
   {
     "title": "Memberi Pada Tempatnya",
     "date": "2023-07-26",
     "category": "Monthly Essay",
     "excerpt": "Berbagi, perhitungan tak terduga, dan bahagia dengan berbagi.",
-    "file": "posts/memberi-pada-tempatnya.md"
+    "file": "posts/memberi-pada-tempatnya.md",
+    "cover": "images/memberi-1.jpg"
   },
   {
     "title": "In Motion and Action",
     "date": "2023-10-25",
     "category": "Monthly Essay",
     "excerpt": "rencan, aksi, dan eksekusi.",
-    "file": "posts/motion-action.md"
+    "file": "posts/motion-action.md",
+    "cover": "images/action-1.jpg"
   },
   {
     "title": "Pro Kontra Omnibus Law UU Cipta Kerja",
@@ -60,20 +67,23 @@
     "date": "2026-05-03",
     "category": "Monthly Essay",
     "excerpt": "Kepercayaan, agama Abrahamik, dan opini pribadi tentang cara manusia memaknai dogma.",
-    "file": "posts/the-best-religion.md"
+    "file": "posts/the-best-religion.md",
+    "cover": "images/religion-1.jpg"
   },
   {
     "title": "Materi Khutbah Jumat Yang Kurang Sependapat",
     "date": "2022-02-22",
     "category": "Monthly Essay",
     "excerpt": "interpretasi agama, religius, dan pemuka agama.",
-    "file": "posts/khutbah-jumat.md"
+    "file": "posts/khutbah-jumat.md",
+    "cover": "images/khutbah-1.jpg"
   },
   {
     "title": "SBMPTN",
     "date": "2021-02-17",
     "category": "Monthly Essay",
     "excerpt": "Penjelasan sederhana sbmptn, ujian masuk kampus, dan tekanan yang sering dialami pelajar.",
-    "file": "posts/sbmptn.md"
+    "file": "posts/sbmptn.md",
+    "cover": "images/sbmptn-1.jpg"
   }
 ]

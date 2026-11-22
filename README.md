@@ -1,26 +1,81 @@
-# Ruang-Tulis
+# Ruang Tulis
 
-Blog statis dengan editor rich text dan layanan publisher terpisah. Folder Ruang Tulis yang kosong digantikan oleh implementasi Ruang-Tulis-main.
+Blog pribadi berbahasa Indonesia untuk opini, refleksi, dan catatan. Statis, cepat, tanpa framework, dan bisa langsung di-hosting di GitHub Pages. Dilengkapi editor tulis bergaya Telegra.ph: tulis judul dan isi, tempel gambar, klik **Terbitkan**.
 
-## Menjalankan
+**Situs:** https://andikapramudya-project.github.io/Ruang-Tulis/
+
+## Fitur
+
+**Pembaca**
+- Tata letak editorial: tipografi serif nyaman dibaca, palet kertas hangat, tema terang dan gelap mengikuti perangkat
+- Beranda dengan tulisan unggulan bergambar, arsip per bulan, dan filter kategori
+- Halaman artikel dengan estimasi waktu baca, progres baca, serta tautan tulisan sebelumnya/berikutnya
+- Responsif dari 375 px hingga layar lebar, dengan navigasi keyboard, skip link, dan dukungan `prefers-reduced-motion`
+- Pratinjau tautan (Open Graph) saat dibagikan
+
+**Penulis** (`tulis.html`)
+- Editor rich text berbasis TipTap: tebal, miring, judul, tautan, kutipan, dan daftar
+- Gambar ditempel atau diseret, lalu otomatis diperkecil (maks. 1600 px) dan dikonversi ke WebP
+- Draft tersimpan otomatis di browser, lengkap dengan pratinjau
+- Satu klik **Terbitkan**: tulisan, gambar, dan `posts.json` masuk ke GitHub dalam satu commit, tanpa upload file Markdown manual
+- Login GitHub lewat Cloudflare Worker; hanya akun pemilik yang boleh menerbitkan
+
+## Teknologi
+
+HTML, CSS, dan JavaScript murni untuk situs pembaca. Editor memakai TipTap, `marked`, `dompurify`, dan `turndown`, dibangun dengan esbuild. Penerbitan memakai Cloudflare Worker dan GitHub OAuth. Tulisan disimpan sebagai Markdown di folder `posts/`.
+
+## Struktur proyek
+
+```
+index.html        Halaman pembaca
+tulis.html        Editor penulis
+style.css         Gaya situs (token warna & tipografi di bagian atas)
+script.js         Logika pembaca: routing, daftar, artikel
+posts/            Tulisan (Markdown)
+posts.json        Daftar tulisan (judul, tanggal, kategori, ringkasan, sampul)
+images/           Gambar tulisan
+src/              Sumber editor dan renderer
+publisher/        Cloudflare Worker untuk penerbitan
+docs/             Panduan aktivasi editor
+tests/            Pengujian layanan penerbitan
+```
+
+## Menjalankan secara lokal
+
+Butuh Node.js versi LTS terbaru.
 
 ```sh
 npm ci
-npm run build
-npm test
-npm run dev
+npm run dev      # buka http://127.0.0.1:4173
+npm test         # jalankan pengujian
+npm run build    # bangun ulang assets/ dan bundle Worker setelah mengubah src/ atau publisher/
 ```
 
-`index.html` adalah pembaca dan `tulis.html` editor. Build menghasilkan aset browser dan bundle worker. Konten `posts/`, `posts.json`, dan gambar yang digunakan situs merupakan data publik aplikasi, bukan draft agent. Artikel tambahan dalam arsip Telegram tidak dimasukkan otomatis ke sumber yang sudah lengkap.
+Menambah tulisan tidak memerlukan build.
 
-Sebelum hosting baru, sesuaikan `site.config.js`. Untuk layanan penerbitan, sesuaikan `publisher/wrangler.toml`, numeric GitHub user ID, namespace KV, OAuth, dan secrets; lihat `docs/AKTIVASI-EDITOR.md`. Editor lokal tidak berarti layanan penerbitan sudah aktif. Root yang telah dibangun dapat di-host di GitHub Pages. Lisensi dependency tetap tersedia di `assets/THIRD-PARTY.txt`.
+## Menambah tulisan
 
-## Rilis dan repositori
+**Lewat editor (disarankan).** Aktifkan layanan penerbitan satu kali dengan mengikuti [panduan aktivasi](docs/AKTIVASI-EDITOR.md). Setelah itu, buka `tulis.html`, masuk dengan GitHub, tulis, lalu klik **Terbitkan**.
 
-Tidak ditemukan rilis jadi yang sesuai dalam sumber terpilih. Paket ini berisi sumber; hasil build baru dapat dibuat sesuai lingkungan dan konfigurasi masing-masing.
+**Manual.** Tambahkan file `posts/nama-tulisan.md`, taruh gambar di `images/`, lalu daftarkan di `posts.json`:
 
-Gunakan folder ini sebagai root repositori baru. Kredensial, riwayat Git lama, data pribadi, cache, rancangan agent, dan draft tidak disertakan. Metadata yang masih bertanda `REPLACE_WITH_...` perlu diisi sesuai hosting tujuan.
+```json
+{
+  "title": "Judul tulisan",
+  "date": "2026-11-23",
+  "category": "Monthly Essay",
+  "excerpt": "Ringkasan satu atau dua kalimat.",
+  "file": "posts/nama-tulisan.md",
+  "cover": "images/nama-sampul.jpg"
+}
+```
 
-## Pemeriksaan paket sumber — 22 November 2026
+Kolom `cover` bersifat opsional; kategori yang dikenali adalah `Weekly Note`, `Monthly Essay`, dan `Personal`.
 
-Build bundel browser/publisher, 12 tes, dan pembukaan halaman di Chrome headless lulus. Hosting dan OAuth belum dikonfigurasi.
+## Deploy
+
+Situs ini siap dipakai di GitHub Pages: pilih branch `main`, folder `/ (root)`. Sesuaikan `site.config.js` bila repositori atau alamat situs berubah.
+
+## Lisensi
+
+Konten tulisan © Andika Pramudya. Lisensi dependensi pihak ketiga tersedia di `assets/THIRD-PARTY.txt`.

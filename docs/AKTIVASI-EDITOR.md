@@ -5,7 +5,7 @@ satu kali agar tombol Terbitkan benar-benar menyimpan artikel ke GitHub Pages.
 Kode ini belum mengaktifkan akun, OAuth App, atau Worker atas nama Anda.
 
 Blog tetap di GitHub Pages. Worker hanya menangani login GitHub dan penerbitan.
-Repository: `andikapramudyadika/Ruang-Tulis`, branch `main`, folder situs `/`.
+Repository: `andikapramudya-project/Ruang-Tulis`, branch `main`, folder situs `/`.
 Jika pengaturan Pages Anda menggunakan branch/folder lain, samakan konfigurasi
 Worker dan `site.config.js` sebelum mengaktifkan penerbitan.
 
@@ -53,9 +53,9 @@ Buka Worker → Settings → Variables and Secrets. Tambahkan:
 | Nama | Tipe | Nilai |
 | --- | --- | --- |
 | `SITE_URL` | Text | `https://andikapramudya-project.github.io/Ruang-Tulis/` |
-| `GITHUB_REPOSITORY` | Text | `andikapramudyadika/Ruang-Tulis` |
+| `GITHUB_REPOSITORY` | Text | `andikapramudya-project/Ruang-Tulis` |
 | `GITHUB_BRANCH` | Text | `main` |
-| `ALLOWED_GITHUB_ID` | Text | `124312344` |
+| `ALLOWED_GITHUB_ID` | Text | `359870989` (ID akun `andikapramudya-project`; cek di https://api.github.com/users/andikapramudya-project, kolom `id`) |
 | `GITHUB_CLIENT_ID` | Secret | Client ID dari GitHub |
 | `GITHUB_CLIENT_SECRET` | Secret | Client Secret dari GitHub |
 | `SESSION_SECRET` | Secret | String acak 32 karakter atau lebih |
@@ -92,6 +92,16 @@ produksi dari alamat GitHub Pages. Untuk pengembangan, gunakan OAuth App dan Wor
 terpisah dengan `SITE_URL` localhost; jangan mengubah origin produksi untuk tes.
 
 ## Pemakaian sehari-hari
+
+Alurnya hanya tiga langkah: buka `tulis.html` → tulis judul dan isi (tempel atau seret
+gambar langsung ke tulisan) → klik **Terbitkan**. Kategori, tanggal, alamat, dan ringkasan
+terisi otomatis; buka "Detail tulisan" hanya bila ingin mengubahnya. Tulisan biasanya
+tampil di situs dalam satu sampai dua menit setelah GitHub Pages selesai memperbarui.
+
+Tips ponsel: buka `tulis.html` di browser ponsel, lalu pilih "Tambahkan ke layar utama"
+agar terbuka seperti aplikasi.
+
+Sesi masuk berlaku tujuh hari, jadi login GitHub tidak perlu diulang setiap menulis.
 
 - Draft tersimpan otomatis di perangkat dan browser yang sama. Draft belum
   tersinkron antarpiranti. Simpan salinan Markdown bila perlu cadangan.

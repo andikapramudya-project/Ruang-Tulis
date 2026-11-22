@@ -18,16 +18,24 @@ function showPage(id,focus=true){
  window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
  if(focus)(page.querySelector('h1')||main).focus({preventScroll:true});
  if(page.id!=='article')lastList=page.id;
- document.title=page.id==='home'?'Ruang Tulis':`${page.querySelector('h1')?.textContent||'Tulisan'} — Ruang Tulis`;
+ if(page.id!=='article')document.title=page.id==='home'?'Ruang Tulis':`${page.querySelector('h1')?.textContent||'Tulisan'} — Ruang Tulis`;
+ setProgress(page.id==='article');
 }
 function empty(message,link=true){return `<div class="empty-state"><strong>Belum ada tulisan di sini.</strong>${esc(message)}${link?'<br><a class="text-link" href="#archive">Jelajahi tulisan lainnya '+RuangUI.icon('arrow')+'</a>':''}</div>`;}
-function card(post,featured=false){return `<article class="post-card${featured?' post-featured':''}"><p class="post-meta"><time datetime="${esc(post.date)}">${esc(date(post.date))}</time><span>${esc(post.category)}</span></p><div class="post-copy"><h3><a href="${href(post)}">${esc(post.title)}</a></h3><p>${esc(post.excerpt)}</p></div><a class="read-more" href="${href(post)}" aria-label="Baca ${esc(post.title)}">${RuangUI.icon('arrow')}</a></article>`;}
+const cover=post=>post.cover&&/^images\/[\w.\-]+$/.test(post.cover)?`<div class="post-cover"><img src="${esc(post.cover)}" alt="" loading="lazy" decoding="async"></div>`:'';
+function card(post,featured=false){return `<article class="post-card${featured?' post-featured':''}${post.cover?' has-cover':''}">${cover(post)}<p class="post-meta"><time datetime="${esc(post.date)}">${esc(date(post.date))}</time><span>${esc(post.category)}</span></p><div class="post-copy"><h3><a href="${href(post)}">${esc(post.title)}</a></h3><p>${esc(post.excerpt)}</p></div><a class="read-more" href="${href(post)}" aria-label="Baca ${esc(post.title)}">${RuangUI.icon('arrow')}</a></article>`;}
 function renderList(id,list,message,featured=false){const el=document.getElementById(id);el.innerHTML=list.length?list.map((p,i)=>card(p,featured&&i===0)).join(''):empty(message);el.setAttribute('aria-busy','false');}
 function renderArchive(){
  const visible=posts.filter(p=>activeFilter==='all'||category(p)===activeFilter);
  const groups=new Map();visible.forEach(p=>{const month=new Date(`${p.date}T00:00:00`).toLocaleDateString('id-ID',{month:'long',year:'numeric'});if(!groups.has(month))groups.set(month,[]);groups.get(month).push(p);});
  document.getElementById('archiveList').innerHTML=visible.length?[...groups].map(([month,list])=>`<div class="archive-group"><h2>${esc(month)}</h2><ul>${list.map(p=>`<li><time datetime="${esc(p.date)}">${esc(date(p.date,true))}</time><a href="${href(p)}">${esc(p.title)}</a><small>${esc(p.category)}</small></li>`).join('')}</ul></div>`).join(''):empty('Coba kategori lain untuk menemukan tulisan.',false);
 }
+const progress=document.getElementById('readProgress');
+function updateProgress(){if(!progress)return;const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max>0?Math.min(1,scrollY/max):0})`;}
+function setProgress(on){if(!progress)return;progress.classList.toggle('on',on);if(on)updateProgress();}
+addEventListener('scroll',()=>{if(progress?.classList.contains('on'))requestAnimationFrame(updateProgress);},{passive:true});
+const readingTime=md=>Math.max(1,Math.round(md.split(/\s+/).filter(Boolean).length/200));
+function pager(post){const i=posts.indexOf(post);if(i<0)return '';const newer=posts[i-1],older=posts[i+1];const link=(p,cls,label)=>p?`<a class="pager-link ${cls}" href="${href(p)}"><small>${label}</small><span>${esc(p.title)}</span></a>`:'';const html=link(older,'pager-prev','← Tulisan sebelumnya')+link(newer,'pager-next','Tulisan berikutnya →');return html?`<nav class="pager" aria-label="Tulisan lainnya">${html}</nav>`:'';}
 function backLink(){const id=['home','weekly','monthly','archive'].includes(lastList)?lastList:'home';return `<a href="#${id}" class="back-link">${RuangUI.icon('back')} Kembali ke ${id==='home'?'beranda':id==='archive'?'arsip':id==='weekly'?'Weekly Notes':'Monthly Essays'}</a>`;}
 function enhanceArticle(el,post){
  const base=new URL(post.file,location.href);
@@ -41,15 +49,15 @@ function enhanceArticle(el,post){
  const quotes=el.querySelectorAll('blockquote');const closing=quotes[quotes.length-1];if(closing){closing.classList.add('closing-quote');if(closing.nextElementSibling?.tagName==='HR')closing.nextElementSibling.classList.add('after-closing-quote');}
 }
 async function loadArticle(post,focus){
- const el=document.getElementById('articleContent');showPage('article',false);el.setAttribute('aria-busy','true');el.innerHTML=backLink()+'<p class="loading-state" role="status"><span class="loading-dot"></span>Menyiapkan tulisan…</p>';
+ const el=document.getElementById('articleContent');showPage('article',false);el.setAttribute('aria-busy','true');el.innerHTML=backLink()+'<p class="loading-state" role="status"><span class="loading-dot"></span>Menyiapkan tulisan…</p><div class="skeleton" aria-hidden="true"><i></i><i></i><i></i></div>';
  articleRequest=new AbortController();const request=articleRequest;
  try{
   if(!post)throw new Error('not-found');
   const response=await fetch(post.file,{signal:request.signal});if(!response.ok)throw new Error('not-found');
   const md=(await response.text()).replace(/^\uFEFF?(\s*\r?\n)*#\s+.+(?:\r?\n|$)/,'');
   if(request!==articleRequest)return;
-  el.innerHTML=`${backLink()}<p class="eyebrow">${esc(post.category)}</p><h1 tabindex="-1">${esc(post.title)}</h1><p class="article-meta"><time datetime="${esc(post.date)}">${esc(date(post.date))}</time> · Andika Pramudya</p>${RuangRenderer.render(md)}`;
-  enhanceArticle(el,post);document.title=`${post.title} — Ruang Tulis`;if(focus)el.querySelector('h1').focus({preventScroll:true});
+  el.innerHTML=`${backLink()}<p class="eyebrow">${esc(post.category)}</p><h1 tabindex="-1">${esc(post.title)}</h1><p class="article-meta"><time datetime="${esc(post.date)}">${esc(date(post.date))}</time> · Andika Pramudya · ${readingTime(md)} menit baca</p>${RuangRenderer.render(md)}${pager(post)}`;
+  enhanceArticle(el,post);updateProgress();document.title=`${post.title} — Ruang Tulis`;if(focus)el.querySelector('h1').focus({preventScroll:true});
  }catch(error){if(error.name==='AbortError')return;if(request!==articleRequest)return;el.innerHTML=`${backLink()}<h1 tabindex="-1">Tulisan belum bisa dibuka.</h1><div class="empty-state">Coba muat kembali, atau jelajahi tulisan lainnya.<br><button class="button" data-retry="article">Coba lagi</button></div>`;if(focus)el.querySelector('h1').focus({preventScroll:true});}
  finally{if(request===articleRequest)el.setAttribute('aria-busy','false');}
 }

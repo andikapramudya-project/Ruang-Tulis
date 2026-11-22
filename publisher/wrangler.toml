@@ -7,7 +7,7 @@ workers_dev = true
 SITE_URL = "https://andikapramudya-project.github.io/Ruang-Tulis/"
 GITHUB_REPOSITORY = "andikapramudya-project/Ruang-Tulis"
 GITHUB_BRANCH = "main"
-ALLOWED_GITHUB_ID = "REPLACE_WITH_YOUR_NUMERIC_GITHUB_ID"
+ALLOWED_GITHUB_ID = "359870989"
 
 # Replace the namespace ID after running: wrangler kv namespace create SESSIONS
 [[kv_namespaces]]

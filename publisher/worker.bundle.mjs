@@ -23,7 +23,7 @@ function validatePost(input) {
 }
 
 // publisher/worker.mjs
-var SESSION_TTL = 8 * 60 * 60;
+var SESSION_TTL = 7 * 24 * 60 * 60;
 var MAX_BODY = 12 * 1024 * 1024;
 var enc = new TextEncoder();
 var dec = new TextDecoder();
