@@ -69,3 +69,8 @@ dialog label+label {margin-top:20px}
 @media(max-width:900px) {.format-bar {top:68px}}
 @media(max-width:740px) {.writer-shell {width:calc(100% - 40px);margin-top:32px}.writer-label {display:none}.writer-header {gap:8px}.writer-header .logo {font-size:15px;gap:6px}.writer-header .logo-mark {display:none}.writer-actions {gap:0}.writer-actions .button {padding-inline:10px}.writer-actions .button-quiet {width:44px;padding:0}.action-label {display:none}.writer-actions #publishButton svg {display:none}.writer-status {margin-bottom:28px;align-items:flex-start;flex-direction:column;gap:6px}.writer-title {font-size:36px}.format-bar {top:64px}.connection-panel {align-items:flex-start;flex-direction:column;padding:18px;gap:16px}.writer-bottom {align-items:flex-start;flex-direction:column;gap:0}.detail-grid {gap:16px}.publishing-details summary span {display:none}dialog {padding:20px}.preview-dialog .article-body {padding-inline:0}}
 @media(max-width:360px) {.writer-header {padding-inline:12px}.writer-header .logo {font-size:0;min-width:44px;justify-content:center;gap:0}.writer-header .logo-mark {display:grid}.writer-shell {width:calc(100% - 32px)}.detail-grid {grid-template-columns:1fr}}
+.delete-confirm {flex:1;padding:14px 0}
+.delete-confirm p {margin:0;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.delete-confirm .dialog-actions {margin-top:12px;flex-wrap:wrap}
+.library-item .delete-post {color:#c0392b}
+:root[data-theme="dark"] .library-item .delete-post {color:#ff8a80}
