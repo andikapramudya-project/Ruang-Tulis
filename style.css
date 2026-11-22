@@ -24,7 +24,6 @@
 
   --font-main: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-display: var(--font-main);
-  --font-serif: Newsreader, "Iowan Old Style", Georgia, "Times New Roman", serif;
 
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-6: 24px; --space-8: 32px; --space-12: 48px; --space-16: 64px;
@@ -208,22 +207,12 @@ p { margin: 0 0 var(--space-4); }
 figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-align: center; margin-top: 8px; }
 .broken-image { padding: 20px; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); font-size: 14px; border-radius: var(--radius-panel); }
 
-/* pilihan font artikel: Sans (default) atau Serif — disimpan di browser */
-:root[data-font="serif"] .article-body { font-family: var(--font-serif); font-size: 20px; line-height: 1.75; }
-:root[data-font="serif"] .article-body h1,
-:root[data-font="serif"] .article-body h2,
-:root[data-font="serif"] .article-body h3 { font-family: var(--font-serif); }
-
-/* breadcrumb + pilihan font */
+/* breadcrumb */
 .crumb-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 14px; color: var(--text-muted); }
 .crumbs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .crumbs a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 6px; margin-left: -6px; border-radius: var(--radius-control); color: var(--text-muted); }
 .crumbs a:hover { background: var(--surface-hover); color: var(--text); text-decoration: none; }
 .crumbs span[aria-hidden] { opacity: .6; }
-.font-switch { display: inline-flex; padding: 2px; border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--bg); }
-.font-switch button { min-height: 32px; min-width: 52px; padding: 0 10px; border: 0; border-radius: 3px; background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 500; }
-.font-switch button:hover { color: var(--text); }
-.font-switch button[aria-pressed="true"] { background: var(--surface-hover); color: var(--text); }
 
 /* satu baris info di bawah judul */
 .article-body .article-meta { margin: 0 0 32px; font-size: 14px; color: var(--text-muted); }
@@ -281,7 +270,6 @@ figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-a
   .archive-group li { grid-template-columns: 52px minmax(0, 1fr); gap: 10px; }
   .archive-group small { display: none; }
   .article-body { max-width: calc(100% - 40px); padding-top: 20px; font-size: 16px; }
-  :root[data-font="serif"] .article-body { font-size: 18px; }
   .article-body h2 { font-size: 23px; }
   .pager { grid-template-columns: 1fr; }
   .pager-next, .pager-prev { grid-column: 1; text-align: left; }

@@ -9,7 +9,7 @@ Blog pribadi berbahasa Indonesia untuk opini, refleksi, dan catatan. Statis, cep
 **Pembaca**
 - Tampilan bersih bergaya Notion: palet netral, font Inter, label kategori netral, tema terang dan gelap mengikuti perangkat
 - Beranda dengan tulisan unggulan bergambar, arsip per bulan, dan filter kategori
-- Halaman artikel dengan breadcrumb, estimasi waktu baca, bar progres baca, pilihan font Sans/Serif, serta tautan tulisan sebelumnya/berikutnya
+- Halaman artikel dengan breadcrumb, estimasi waktu baca, bar progres baca, serta tautan tulisan sebelumnya/berikutnya
 - Responsif dari 375 px hingga layar lebar, dengan navigasi keyboard, skip link, dan dukungan `prefers-reduced-motion`
 - Pratinjau tautan (Open Graph) saat dibagikan
 

@@ -41,8 +41,7 @@ function backLink(){
  const id=['home','weekly','monthly','archive'].includes(lastList)?lastList:'home';
  const names={weekly:'Weekly Notes',monthly:'Monthly Essays',archive:'Tulisan'};
  const section=id==='home'?'':`<span aria-hidden="true">/</span><a class="back-link" href="#${id}">${names[id]}</a>`;
- const font=localStorage.getItem('font')==='serif'?'serif':'sans';
- return `<div class="crumb-row"><nav class="crumbs" aria-label="Jalur halaman"><a class="back-link" href="#home">Ruang Tulis</a>${section}</nav><div class="font-switch" role="group" aria-label="Jenis huruf artikel"><button type="button" data-font-choice="sans" aria-pressed="${font==='sans'}">Sans</button><button type="button" data-font-choice="serif" aria-pressed="${font==='serif'}">Serif</button></div></div>`;
+ return `<div class="crumb-row"><nav class="crumbs" aria-label="Jalur halaman"><a class="back-link" href="#home">Ruang Tulis</a>${section}</nav></div>`;
 }
 function enhanceArticle(el,post){
  const base=new URL(post.file,location.href);
@@ -75,7 +74,7 @@ function handleHash(focus=true){
  showPage(pages.some(p=>p.id===hash&&p.id!=='article')?hash:'home',focus);
 }
 async function loadPosts(){
- try{const response=await fetch('posts.json',{cache:'no-cache'});if(!response.ok)throw new Error('network');posts=(await response.json()).sort((a,b)=>new Date(b.date)-new Date(a.date));
+ try{const response=await fetch('posts.json',{cache:'no-cache'});if(!response.ok)throw new Error('network');posts=(await response.json()).map((p,i)=>({p,i})).sort((a,b)=>new Date(b.p.date)-new Date(a.p.date)||b.i-a.i).map(x=>x.p);
  renderList('latestPosts',posts.slice(0,3),'Tulisan baru akan hadir di sini.',true);
  renderList('weeklyPosts',posts.filter(p=>category(p)==='weekly'),'Catatan mingguan akan hadir di sini. Sementara itu, ada esai yang bisa dibaca.');
  renderList('monthlyPosts',posts.filter(p=>category(p)==='monthly'),'Esai berikutnya sedang menunggu waktunya.');renderArchive();handleHash(false);
@@ -84,7 +83,6 @@ async function loadPosts(){
 menuButton.addEventListener('click',()=>{const open=menuButton.getAttribute('aria-expanded')!=='true';menu.classList.toggle('open',open);menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'Tutup menu':'Buka menu');menuButton.innerHTML=RuangUI.icon(open?'close':'menu');});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('open')){closeMenu();menuButton.focus();}});
 document.addEventListener('click',e=>{if(e.target.closest('.skip-link')){e.preventDefault();main.focus();return;}if(!e.target.closest('.site-header'))closeMenu();const retry=e.target.closest('[data-retry]');if(retry){if(retry.dataset.retry==='posts')loadPosts();else handleHash();}});
-document.addEventListener('click',e=>{const b=e.target.closest('[data-font-choice]');if(!b)return;const f=b.dataset.fontChoice;document.documentElement.dataset.font=f;RuangUI.storage.set('font',f);document.querySelectorAll('[data-font-choice]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
 document.getElementById('archiveFilter').addEventListener('click',e=>{const button=e.target.closest('[data-filter]');if(!button)return;activeFilter=button.dataset.filter;document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});renderArchive();});
 pages.forEach(p=>p.querySelector('h1')?.setAttribute('tabindex','-1'));
 window.addEventListener('hashchange',()=>handleHash());loadPosts();
