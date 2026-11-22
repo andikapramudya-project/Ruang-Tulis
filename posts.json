@@ -96,5 +96,15 @@
     "publicationId": "4b899f7c-2339-4566-87d6-d06ef9e3dc1d",
     "publicationHash": "38bd916f5f380de56ad7e87ca93e52aa7bec131651a6bf76fd48368d37577187",
     "cover": "images/apa-yang-membuatmu-tidak-religius-5d495cb112b32dda.webp"
+  },
+  {
+    "title": "Kenyataan Pahit Agama",
+    "date": "2026-11-23",
+    "category": "Monthly Essay",
+    "excerpt": "Agama adalah sistem kepercayaan satu orang, yang kemudian, dipopulerkan.",
+    "slug": "kenyataan-pahit-agama",
+    "file": "posts/kenyataan-pahit-agama.md",
+    "publicationId": "2e61272e-e1ab-4506-8f4c-b54af6874191",
+    "publicationHash": "29adee9774e03c3e03bb32feb2464d57511bf3b84169ea7a5eba6e28ab5b71a3"
   }
 ]
