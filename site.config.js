@@ -2,6 +2,6 @@
 window.RUANG_TULIS = Object.freeze({
   repository: 'andikapramudya-project/Ruang-Tulis',
   branch: 'main',
-  siteUrl: '',
-  publisherUrl: ''
+  siteUrl: 'https://andikapramudya-project.github.io/Ruang-Tulis/',
+  publisherUrl: 'https://ruang-tulis-publisher.andikapramudya17.workers.dev'
 });
