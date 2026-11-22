@@ -21,10 +21,6 @@
   --danger: #a32c27;
   --success: #246348;
 
-  /* label kategori */
-  --tag-monthly-bg: #fadec9; --tag-monthly-text: #49290e;
-  --tag-weekly-bg: #d3e5ef;  --tag-weekly-text: #183347;
-  --tag-personal-bg: #dbeddb; --tag-personal-text: #1c3829;
 
   --font-main: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-display: var(--font-main);
@@ -44,9 +40,6 @@
   --surface: #252525; --surface-hover: #2f2f2f; --border: #373737;
   --control-border: #787774; --accent: #529cca; --on-accent: #0b1a26;
   --quote-bg: #252525; --danger: #ffaaa4; --success: #9ad6b6;
-  --tag-monthly-bg: #5a3a22; --tag-monthly-text: #f3d2b3;
-  --tag-weekly-bg: #1f3a4f;  --tag-weekly-text: #bfd9ec;
-  --tag-personal-bg: #234232; --tag-personal-text: #bde0c9;
   --shadow: 0 0 0 1px rgb(255 255 255 / .08), 0 12px 32px rgb(0 0 0 / .45);
 }
 
@@ -85,11 +78,8 @@ p { margin: 0 0 var(--space-4); }
 .skip-link:focus { top: 10px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* label kategori (pil kecil berwarna) */
-.tag { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 13px; font-weight: 500; line-height: 1.5; background: var(--surface-hover); color: var(--text); white-space: nowrap; }
-.tag[data-cat="monthly"] { background: var(--tag-monthly-bg); color: var(--tag-monthly-text); }
-.tag[data-cat="weekly"] { background: var(--tag-weekly-bg); color: var(--tag-weekly-text); }
-.tag[data-cat="personal"] { background: var(--tag-personal-bg); color: var(--tag-personal-text); }
+/* label kategori (pil kecil abu-abu netral) */
+.tag { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 13px; font-weight: 500; line-height: 1.5; background: var(--surface-hover); color: var(--text-muted); white-space: nowrap; }
 
 /* 3) HEADER ------------------------------------------------------------- */
 .site-header { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--border); }
@@ -145,7 +135,8 @@ p { margin: 0 0 var(--space-4); }
 .post-card .post-copy a::after { content: ""; position: absolute; inset: 0; }  /* seluruh kartu bisa diklik */
 .post-meta { margin: 0; color: var(--text-muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
 .post-cover { overflow: hidden; border-radius: var(--radius-panel); aspect-ratio: 4 / 3; background: var(--surface); box-shadow: 0 0 0 1px var(--border); }
-.post-cover img { width: 100%; height: 100%; object-fit: cover; }
+.post-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 500ms cubic-bezier(.2, .7, .2, 1); }
+@media (hover: hover) { .post-card:hover .post-cover img { transform: scale(1.05); } }
 .read-more { display: none; }
 .post-card:not(.has-cover) { grid-template-columns: minmax(0, 1fr); }
 .post-card:not(.has-cover) .post-meta, .post-card:not(.has-cover) .post-copy { grid-column: 1; }
@@ -233,11 +224,12 @@ figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-a
 .font-switch button:hover { color: var(--text); }
 .font-switch button[aria-pressed="true"] { background: var(--surface-hover); color: var(--text); }
 
-/* properti tulisan ala Notion */
-.props { margin: 0 0 32px; padding: 12px 0; border-block: 1px solid var(--border); display: grid; gap: 4px; font-size: 14px; }
-.props div { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: center; min-height: 32px; }
-.props dt { color: var(--text-muted); }
-.props dd { margin: 0; }
+/* satu baris info di bawah judul */
+.article-body .article-meta { margin: 0 0 32px; font-size: 14px; color: var(--text-muted); }
+
+/* bar progres baca di tepi atas layar (hanya halaman artikel) */
+.read-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 200; background: var(--text); transform: scaleX(0); transform-origin: left; pointer-events: none; opacity: 0; transition: opacity var(--motion-base); }
+.read-progress.on { opacity: 1; }
 
 .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 56px; }
 .pager-link { display: block; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-panel); color: var(--text); transition: background-color var(--motion-fast); }
@@ -261,6 +253,7 @@ figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-a
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   html { scroll-behavior: auto; }
+  .read-progress { display: none; }
 }
 
 /* 11) RESPONSIF --------------------------------------------------------- */
@@ -288,7 +281,6 @@ figcaption { font-size: 14px; line-height: 1.6; color: var(--text-muted); text-a
   .article-body { max-width: calc(100% - 40px); padding-top: 20px; font-size: 16px; }
   :root[data-font="serif"] .article-body { font-size: 18px; }
   .article-body h2 { font-size: 23px; }
-  .props div { grid-template-columns: 96px minmax(0, 1fr); }
   .pager { grid-template-columns: 1fr; }
   .pager-next, .pager-prev { grid-column: 1; text-align: left; }
   .site-footer { width: calc(100% - 40px); align-items: flex-start; flex-direction: column; gap: 4px; }
